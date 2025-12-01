@@ -39,6 +39,7 @@ export interface Choice {
   condition?: (stats: GameStats, history: string[]) => boolean;
   alternateDescription?: string;
   alternateEffects?: ChoiceEffect[];
+  successDescription?: string;
 }
 
 export interface Scenario {

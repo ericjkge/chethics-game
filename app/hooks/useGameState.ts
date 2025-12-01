@@ -55,6 +55,14 @@ export const useGameState = () => {
                   effects: choice.alternateEffects || []
               };
           }
+      } else {
+          // Condition PASSED (or no condition). Use success description if available.
+          if (choice.successDescription) {
+              finalChoice = {
+                  ...choice,
+                  description: choice.successDescription,
+              };
+          }
       }
 
       // Apply stat changes

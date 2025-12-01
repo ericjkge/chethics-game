@@ -351,6 +351,7 @@ export const SCENARIOS: Scenario[] = [
            { stat: 'populace', change: -20, label: '−Popular Support (Failed)' },
            { stat: 'efficiency', change: -10, label: '−Efficiency' }
         ],
+        successDescription: 'Your decision shocks the court, but the relief convoys move steadily across the border. Eventually, it seems that both your own people and those in border villages manage to make it out of the crisis. Refugees praise your compassion, and rival states, unaccustomed to such generosity, take careful note. While some whisper that your mercy makes you appear naïve or foolish, many admire a kingdom that is willing to aid strangers when they are in need.',
         philosopherTags: {
           mozi: 2,
         },
@@ -371,6 +372,7 @@ export const SCENARIOS: Scenario[] = [
            { stat: 'populace', change: -20, label: '−Popular Support (Failed)' },
            { stat: 'efficiency', change: -10, label: '−Efficiency' }
         ],
+        successDescription: 'Your orders are implemented with cold precision, showing the ruthless efficiency of your state.  As the markets fall silent, hoarders are identified one by one, and ration queues move carefully under the watchful eyes of your bureaucracy. Eventually, the grain stretches far enough, and the famine is contained, but the people will remember the severity of your methods.',
         philosopherTags: {
           hanfeizi: 2,
         },
@@ -427,19 +429,20 @@ export const SCENARIOS: Scenario[] = [
       {
         id: 'defensive-doctrine',
         title: 'Defensive Doctrine',
-        description: 'Command your generals to reinforce city walls and fill granaries. No soldier is to fire the first arrow. You publicly declare that your state stands ready to protect itself but refuses to give any neighbor any excuse for violence.',
+        description: 'Command your generals to reinforce city walls, repair border fortresses, and fill granaries in the frontier towns. No soldier is to fire the first arrow or provoke the enemy. You publicly declare that your state stands ready to protect itself but refuses to give any neighbor any excuse for violence.',
         effects: [
-          { stat: 'deterrence', change: 1, label: '+Deterrence' },
-          { stat: 'military', change: 1, label: '+Military' },
-          // +10 Legacy placeholder
+          { stat: 'deterrence', change: 10, label: '+Deterrence' },
+          { stat: 'military', change: 10, label: '+Military Support' },
+          { stat: 'legacy', change: 10, label: '+Legacy' },
         ],
         condition: (stats) => stats.deterrence >= 30,
-        alternateDescription: 'Despite your preparations, the enemy tests your defenses, finds the weak points, and breaks through. As your soldiers desperately try to fight back, villages burn and your realm shrinks. People mutter that good intentions alone could not hold the frontier.',
+        alternateDescription: 'Despite your preparations, the enemy tests your defenses, finds the weak points, and breaks through in a brutal campaign. As your soldiers desperately try to fight back, villages burn, borderlands are captured, and your realm shrinks in size. People mutter that good intentions alone could not hold the frontier.',
         alternateEffects: [
-          { stat: 'populace', change: -1, label: '−Popular Support' },
-          { stat: 'military', change: -1, label: '−Military Support' },
-          // -5 Legacy placeholder
+          { stat: 'populace', change: -10, label: '−Popular Support' },
+          { stat: 'military', change: -10, label: '−Military Support' },
+          { stat: 'legacy', change: -5, label: '−Legacy' },
         ],
+        successDescription: 'Your walls bristle with defenders, but not a single arrow crosses the border. Small feints are made by opposing troops, but your generals remain disciplined and steady. After weeks of staring at unshakable ramparts and disciplined troops, your neighbor quietly withdraws.',
         philosopherTags: {
           mozi: 2,
         },
@@ -448,47 +451,48 @@ export const SCENARIOS: Scenario[] = [
       {
         id: 'virtue-diplomacy',
         title: 'Virtue Diplomacy',
-        description: 'Try to resolve the situation without violence. Send envoys to your neighbor bearing generous terms for peace. You publicly proclaim that you will not take advantage of another and that there is no need for anyone to seek profit over peaceful relations.',
+        description: 'You take a deep breath and try to resolve the situation without violence. You send envoys to your neighbor bearing generous terms for peace, including offers of fair arbitration and guarantees of non-aggression. You publicly proclaim that you will not take advantage of another and that there is no need for anyone to seek profit over maintaining peaceful relations.',
         effects: [
-          { stat: 'diplomacy', change: 1, label: '+Foreign Support' },
-          { stat: 'deterrence', change: 1, label: '+Deterrence' },
-          // +10 Legacy placeholder
+          { stat: 'diplomacy', change: 10, label: '+Foreign Support' },
+          { stat: 'deterrence', change: 10, label: '+Deterrence' },
+          { stat: 'legacy', change: 10, label: '+Legacy' },
         ],
         condition: (stats, history) => {
           const betrayed = history.includes('cunning-strategist'); // 1.1 Betrayer check
           if (betrayed) return false;
           return stats.diplomacy > 30;
         },
-        alternateDescription: 'Your envoys ride out, but discover a shocking fact: the chief minister who once served you now stands at your enemy’s side. Under cover of negotiations, their forces surge forward. Caught off guard, you have no choice but to cede territory.',
+        alternateDescription: "Your envoys ride out bearing generous terms, but when they reach the enemy lines, they discover a shocking fact: the chief minister who once served you now stands at your enemy's side and has seen everything coming. Under the cover of negotiations, their forces surge forward in a sudden assault. Caught off guard, you have no choice but to cede territory.",
         alternateEffects: [
-           // -10 Legacy placeholder (Immediate fail if betrayer, or fail if low support)
-           { stat: 'deterrence', change: -10, label: '−Deterrence (Failed)' }
+          { stat: 'legacy', change: -10, label: '−Legacy' },
+          { stat: 'deterrence', change: -10, label: '−Deterrence' }
         ],
+        successDescription: 'Your neighbor remembers your past good will, and allied courts echo your calls for peace. Faced with a ruler whose peacemaking is known, your neighbor chooses to settle through talks rather than war. As the realm sighs in relief, the standoff dissolves into a public triumph for your moral reputation as a ruler of peace.',
         philosopherTags: {
           mengzi: 2,
         },
-        // Logic for failure return not fully implemented in engine yet, proceeding to next
         nextScenarioId: 'coup-capital',
       },
       {
         id: 'preemption',
         title: 'Preemption',
-        description: 'Strike fast while you have the element of surprise. Order a lightning offensive to burn supply depots and scatter scouts. If you strike swiftly and decisively now, your enemy will not have time to launch a coordinated attack.',
+        description: 'There is no time to waste: you must strike fast while you still have the element of surprise. You order a lightning offensive, drawing on well-trained, fast-moving soldiers to move through mountain passes, burn supply depots, cut roads, and scatter enemy scouts. If you strike swiftly and decisively now, your enemy will not have time to launch a coordinated attack.',
         effects: [
-          { stat: 'military', change: 1, label: '+Military Support' },
-          { stat: 'deterrence', change: 1, label: '+Deterrence' },
-          // +10 Legacy placeholder
+          { stat: 'military', change: 10, label: '+Military Support' },
+          { stat: 'deterrence', change: 10, label: '+Deterrence' },
+          { stat: 'legacy', change: 10, label: '+Legacy' },
         ],
         condition: (stats, history) => {
            const massProduced = history.includes('mass-produce'); // 2.1 Tech check
            if (massProduced) return false;
            return stats.military > 30;
         },
-        alternateDescription: 'Your generals roll out your new military machines to strike first, but in the chaos, one is captured and copied. Within weeks, you watch your own terrifying invention roar back toward your cities.',
+        alternateDescription: 'Your generals roll out your new military machines under the cover of night to strike first, but in the chaos of the offensive, one is captured and copied. Within weeks, you watch your own terrifying invention roar back across the fields toward your cities. People begin to whisper of your reckless gamble.',
         alternateEffects: [
-           { stat: 'deterrence', change: -10, label: '−Deterrence (Failed)' }
-           // -10 Legacy placeholder
+           { stat: 'legacy', change: -10, label: '−Legacy' },
+           { stat: 'deterrence', change: -10, label: '−Deterrence' }
         ],
+        successDescription: "Your forces, well-trained and loyal, move swiftly through mountain passes and along hidden routes, burning supply camps and scattering enemy patrols before a full army can form. Your generals read your opponents' moves, staying one step ahead like a cunning wolf. The neighbor's campaign collapses before it begins, and they retreat into submission.",
         philosopherTags: {
           hanfeizi: 2,
         },
@@ -501,23 +505,24 @@ export const SCENARIOS: Scenario[] = [
     act: 'Act II',
     title: 'Crises of the Reign',
     subtitle: 'Coup in the Capital',
-    description: 'Your ministers report uneasy news: a beloved general has marched a large force into the outer city, claiming "routine exercise." Rumors say he has been meeting with nobles late at night and commands unusual loyalty. The city is tense; any misstep could ignite civil war.',
+    description: 'Your ministers report to you with uneasy news: a beloved general has marched a large force into the outer city, claiming their presence is "routine exercise." You hear rumors that he has been meeting with nobles late at night and that he now commands the loyalty of more soldiers than usual. The city is tense, and it feels like any misstep could ignite civil war.',
     choices: [
       {
         id: 'preemptive-strike',
         title: 'Preemptive Strike',
-        description: 'Issue rapid, secret orders to arrest the general’s closest supporters and rearrange command postings. Prepare public trials to expose traitors. You aim to cut his lines of support before he can act.',
+        description: "Use your latent power and manipulation while you can. You issue rapid, secret orders to arrest the general's closest supporters. You command messengers to rush and rearrange command postings across the realm. You prepare public trials to expose traitors and deter future potential coups from stepping out of line.",
         effects: [
-          { stat: 'deterrence', change: 1, label: '+Deterrence' },
-          // +10 Legacy
+          { stat: 'deterrence', change: 10, label: '+Deterrence' },
+          { stat: 'legacy', change: 10, label: '+Legacy' },
         ],
         condition: (stats) => stats.efficiency > 30,
-        alternateDescription: 'You try to implement the plan, but delays and hesitant officials give your game away. When they get tips of your efforts, the generals close ranks and seize the outer city walls. You have no choice but to offer concessions.',
+        alternateDescription: 'You try to implement the plan, but delays, miscommunications, and hesitant officials give your game away. When they get tips of your efforts, the generals close ranks, march in formation through the streets, and seize the outer city walls. You have no choice but to offer concessions, leaving your empire smaller, weaker, and less respected.',
         alternateEffects: [
-          { stat: 'deterrence', change: -1, label: '−Deterrence' },
-          { stat: 'military', change: -1, label: '−Military Support' },
-          // -5 Legacy
+          { stat: 'deterrence', change: -10, label: '−Deterrence' },
+          { stat: 'military', change: -10, label: '−Military Support' },
+          { stat: 'legacy', change: -5, label: '−Legacy' },
         ],
+        successDescription: 'In a well-organized, effective bureaucracy, your orders fly out faster than whispers can travel. Key officers are seized in the night, public confessions are drawn from them, and by dawn, the general finds himself powerless, with his lines of support cut away. The potential coup dissolves into frightened silence, and he quietly retreats.',
         philosopherTags: {
           hanfeizi: 2,
         },
@@ -526,18 +531,19 @@ export const SCENARIOS: Scenario[] = [
       {
         id: 'ritual-loyalty',
         title: 'Ritual Loyalty',
-        description: 'Summon the aristocracy to a grand ceremony to reaffirm the order of ranks and obligations. You distribute titles and honors, hoping that ritual propriety will anchor their loyalty and eliminate support for the rogue general.',
+        description: 'You will restore loyalty through morality by summoning the aristocracy to a grand ceremony. Before ancestral banners and sacred vessels, you call upon them to reaffirm the order of ranks and the obligations binding lord and minister. You distribute titles and honors, hoping that ritual propriety will anchor their loyalty and eliminate the support behind the rogue general.',
         effects: [
-          { stat: 'deterrence', change: 1, label: '+Deterrence' },
-          // +10 Legacy
+          { stat: 'deterrence', change: 10, label: '+Deterrence' },
+          { stat: 'legacy', change: 10, label: '+Legacy' },
         ],
         condition: (stats) => stats.aristocracy > 30,
-        alternateDescription: 'You convene the ceremony, but the bows are shallow as nobles remember past offenses. Behind your back, offended nobles ride to the general’s camp. By morning, troops surge over the outer gates, forcing you to offer concessions.',
+        alternateDescription: "You convene the ceremony, but the bows are shallow as the nobles remember your past offenses against them. Behind your back, offended nobles ride straight to the general's camp with news of your plans. By the next morning, his troops are surging over the outer city gates. You have no choice but to offer territory and resource concessions, leaving your empire smaller, weaker, and less respected.",
         alternateEffects: [
-          { stat: 'deterrence', change: -1, label: '−Deterrence' },
-          { stat: 'military', change: -1, label: '−Military Support' },
-          // -10 Legacy
+          { stat: 'deterrence', change: -10, label: '−Deterrence' },
+          { stat: 'military', change: -10, label: '−Military Support' },
+          { stat: 'legacy', change: -10, label: '−Legacy' },
         ],
+        successDescription: 'In a hall filled with incense and ancestral banners, the nobles, trustful of your benevolence, kneel and swear renewed oaths of loyalty, emotionally affected by your ritual. When the general looks for support, he suddenly finds doors closed, supplies withheld, and promised support gone. Quietly, the would-be revolt shrivels, and no one dares to challenge you with your nobles behind you.',
         philosopherTags: {
           confucius: 2,
         },
@@ -546,19 +552,20 @@ export const SCENARIOS: Scenario[] = [
       {
         id: 'moral-argument',
         title: 'Moral Argument',
-        description: 'Descend to the front lines and face the soldiers directly. Acknowledge their hardships, pledge reforms to rations and pay, and promise honor if they stand with the throne against their general’s reckless ambition.',
+        description: "You will appeal to the soldiers directly to regain their loyalty. You descend to the front lines yourself and face the soldiers. You acknowledge their hardships, pledge reforms to their rations and pay, and promise honor and fair treatment if they stand with the throne against their general's reckless ambition.",
         effects: [
-          { stat: 'deterrence', change: 1, label: '+Deterrence' },
-          { stat: 'military', change: 1, label: '+Military Support' },
-          // +10 Legacy
+          { stat: 'deterrence', change: 10, label: '+Deterrence' },
+          { stat: 'military', change: 10, label: '+Military Support' },
+          { stat: 'legacy', change: 10, label: '+Legacy' },
         ],
         condition: (stats) => stats.military > 30,
-        alternateDescription: 'Your words fall flat on faces hardened by neglect. Soldiers return to their barracks and report your promises to their commander. The next day, they march on the outer city walls, forcing you to offer concessions.',
+        alternateDescription: 'You make your speech, but notice that your words fall flat on faces hardened by years of neglect. After listening in stony silence, the soldiers, remembering your treatment in the past, return to their barracks and quietly report your promises to their commander. The next day, they march on the outer city walls. You have no choice but to offer concessions, leaving your empire smaller, weaker, and less respected.',
         alternateEffects: [
-          { stat: 'deterrence', change: -1, label: '−Deterrence' },
-          { stat: 'military', change: -1, label: '−Military Support' },
-          // -5 Legacy
+          { stat: 'deterrence', change: -10, label: '−Deterrence' },
+          { stat: 'military', change: -10, label: '−Military Support' },
+          { stat: 'legacy', change: -5, label: '−Legacy' },
         ],
+        successDescription: 'You stand before the assembled soldiers and speak plainly of burdens, pay, and the suffering of ordinary families. The soldiers remember your past accommodations, and with the promises of concrete reforms and shared honor, you win murmurs of approval. The next day, when the general calls them to march on the palace, they hesitate, then refuse.',
         philosopherTags: {
           mozi: 2,
         },
@@ -615,15 +622,16 @@ export const SCENARIOS: Scenario[] = [
       {
         id: 'unannounced-tests',
         title: 'Unannounced Tests',
-        description: 'You must find out which is more capable without revealing your intentions. You design a series of unannounced tests meant to expose which son can better command obedience and manage crises. You quietly orchestrate small emergencies and shuffle advisers between them.',
+        description: 'You must find out which is more capable without revealing your intentions. You design a series of unannounced tests meant to expose which son can better command obedience and manage crises. You quietly orchestrate small emergencies and shuffle advisers between them, rewarding the one who responds with disciplined control and punishing the one who fails your designs.',
         effects: [
-          { stat: 'legacy', change: 10, label: '+Legacy Score' },
+          { stat: 'legacy', change: 10, label: '+Legacy' },
         ],
         condition: (stats) => stats.efficiency > 30,
         alternateDescription: 'Your tests leak, officials fumble instructions, and both sons realize they are being manipulated. Factions panic and rush to protect themselves, and the royal household fractures under suspicion of traps and favoritism.',
         alternateEffects: [
-          { stat: 'legacy', change: -5, label: '−Legacy Score' },
+          { stat: 'legacy', change: -5, label: '−Legacy' },
         ],
+        successDescription: "Your bureaucracy carries out your intricate tests cleanly and quietly. Clumsy supporters are exposed, hidden factions are revealed, and one son shows a clear ability to command and manage the state's machinery. The court accepts your choice, even if their hearts remain cold.",
         philosopherTags: {
           hanfeizi: 2,
         },
@@ -632,15 +640,16 @@ export const SCENARIOS: Scenario[] = [
       {
         id: 'academy-succession',
         title: 'Academy of Succession',
-        description: 'You announce the creation of a formal academy of succession, placing both sons under the supervision of senior elders and ritual masters. Over the coming years, they will be trained in the classics, made to perform rites together, and evaluated through ceremonial examinations.',
+        description: 'You realize that you must not only choose but build up an heir. You announce the creation of a formal academy of succession, placing both sons under the supervision of senior elders and ritual masters. Over the coming years, they will be trained in the classics, made to perform rites together, and evaluated through ceremonial examinations and public displays of propriety.',
         effects: [
-          { stat: 'legacy', change: 10, label: '+Legacy Score' },
+          { stat: 'legacy', change: 10, label: '+Legacy' },
         ],
         condition: (stats) => stats.aristocracy > 30,
-        alternateDescription: 'Your effort starts off with good intentions, but many nobles already harbor discontent toward your policies, jealous of a process that limits their influence. Quietly, they begin to question and undermine the academy’s authority.',
+        alternateDescription: "Your effort starts off with good intentions, but many nobles already harbor discontent toward your policies, jealous of a process that limits their influence. Quietly, they begin to question and undermine the academy's authority. Before you know it, you can no longer trust that your nobles have your succession's best interest at heart.",
         alternateEffects: [
-          { stat: 'legacy', change: -5, label: '−Legacy Score' },
+          { stat: 'legacy', change: -5, label: '−Legacy' },
         ],
+        successDescription: 'Your loyal aristocracy embraces the academy, seeing their own values reflected in its rites and councils. They lend their prestige to its judgments, and you feel a sense of legitimacy as your sons are educated. Your eventual decision feels like the natural outcome of an orderly process rather than a personal whim.',
         philosopherTags: {
           xunzi: 2,
         },
@@ -649,15 +658,16 @@ export const SCENARIOS: Scenario[] = [
       {
         id: 'moral-virtue',
         title: 'Moral Virtue',
-        description: 'You observe both sons carefully over time to judge their moral benevolence and then publicly name the one you judge to be more morally upright, even if it means bypassing birth order. You declare that Heaven’s Mandate rests on virtue, not seniority.',
+        description: "You want an heir who will uphold the morality of your kingdom. You observe both sons carefully over time to judge their moral benevolence and then publicly name the one you judge to be more morally upright, even if it means bypassing birth order. You declare that Heaven's Mandate rests on virtue, not seniority.",
         effects: [
-          { stat: 'legacy', change: 10, label: '+Legacy Score' },
+          { stat: 'legacy', change: 10, label: '+Legacy' },
         ],
         condition: (stats) => stats.populace > 30,
-        alternateDescription: 'You sense right away that the people are uneasy at this prospect. Courtiers and nobles rage that you have upended tradition and threatened the stability of the line of succession over an arbitrary concept. Factions rally around the displaced first-born son.',
+        alternateDescription: 'You sense right away that the people are uneasy at this prospect. Courtiers and nobles rage that you have upended tradition and threatened the stability of the line of succession over an arbitrary concept. Factions rally around the displaced first-born son. You are seen not as a morally benevolent king but an indecisive and erratic one.',
         alternateEffects: [
-          { stat: 'legacy', change: -5, label: '−Legacy Score' },
+          { stat: 'legacy', change: -5, label: '−Legacy' },
         ],
+        successDescription: "The people trust in your judgment and praise your courage. Stories spread of the king who cared more about virtue than his own family's pride, portraying you as a morally benevolent ruler.",
         philosopherTags: {
           mengzi: 2,
         },
@@ -826,20 +836,21 @@ export const SCENARIOS: Scenario[] = [
     act: 'Act III',
     title: 'Legacy and End of Rule',
     subtitle: 'Historian’s Verdict',
-    description: 'As your final months draw near, court historians arrive at your throne and present you with several drafts of your reign’s official chronicle. Some historical drafts soften purges, failed campaigns, and discontent, while others openly highlight them as cautionary lessons. You must decide how tightly you will control how the history books will portray you.',
+    description: "As your final months draw near, court historians arrive at your throne and present you with several drafts of your reign's official chronicle. Some historical drafts soften purges, failed campaigns, and discontent, while others openly highlight them as cautionary lessons. You must decide how tightly you will control how the history books will portray you far into the future.",
     choices: [
       {
         id: 'official-chronicle',
         title: 'Official Chronicle',
         description: 'While you still have power, you must use it. Order the historians to merge the accounts into a single official chronicle that emphasizes order, stability, and continuity, trimming or altering passages that might inflame factions. You make it clear that this version alone will be allowed in the archives.',
         effects: [
-          { stat: 'legacy', change: 10, label: '+Legacy Score' },
+          { stat: 'legacy', change: 10, label: '+Legacy' },
         ],
         condition: (stats) => stats.deterrence > 30,
-        alternateDescription: 'Dissent slips through the cracks of your orders. Scholars quietly circulate forbidden copies of the earlier drafts, and over time, more people come to believe that the state’s history is a carefully staged performance rather than an honest record. Even your great successes are called into question.',
+        alternateDescription: "Dissent slips through the cracks of your orders. Scholars quietly circulate forbidden copies of the earlier drafts, and over time, more people come to believe that the state's history is a carefully staged performance rather than an honest record. Even your great successes are called into question: were they true or merely exaggerated?",
         alternateEffects: [
-          { stat: 'legacy', change: -5, label: '−Legacy Score' },
+          { stat: 'legacy', change: -5, label: '−Legacy' },
         ],
+        successDescription: 'Your decree is obeyed, and no one dares publicly question the authorized version. Future officials quote your chronicle as settled truth, and alternative memories survive only as faint whispers at the margins.',
         philosopherTags: {
           lordshang: 2,
         },
@@ -848,15 +859,16 @@ export const SCENARIOS: Scenario[] = [
       {
         id: 'balanced-account',
         title: 'Balanced Account',
-        description: 'You want to be remembered as a morally honest ruler. Permit a balanced account that records both your achievements and your failures, allowing historians to write faithfully even when the story does not flatter you. You state publicly that a ruler should be judged by the whole of his actions.',
+        description: 'You want to be remembered as a morally honest ruler. Permit a balanced account that records both your achievements and your failures, allowing historians to write faithfully even when the story does not flatter you. You state publicly that a ruler should be judged by the whole of his actions, not by polished fragments.',
         effects: [
-          { stat: 'legacy', change: 10, label: '+Legacy Score' },
+          { stat: 'legacy', change: 10, label: '+Legacy' },
         ],
         condition: (stats) => stats.populace > 30,
         alternateDescription: 'You attempt to seem magnanimous, but within discontented corners of the population rival factions seize on the darker chapters to attack your dynasty and point out weaknesses. Excerpts circulate, painting you as weak or cruel without the balance of the full story.',
         alternateEffects: [
-          { stat: 'legacy', change: -5, label: '−Legacy Score' },
+          { stat: 'legacy', change: -5, label: '−Legacy' },
         ],
+        successDescription: 'The people and many officials praise your openness and honesty. Over time, your willingness to be judged honestly becomes part of the legend of your person. You are remembered as a ruler who was willing to admit his own faults and always prioritized a high moral standing.',
         philosopherTags: {
           mengzi: 2,
         },
@@ -865,7 +877,7 @@ export const SCENARIOS: Scenario[] = [
       {
         id: 'multiple-chronicles',
         title: 'Multiple Chronicles',
-        description: 'Authorize multiple chronicles instead of just one, allowing different schools and regions to write their own versions of your reign. You argue that no single text can capture the entire truth and that trying to fix memory in one official story will only distort it.',
+        description: 'Authorize multiple chronicles instead of just one, allowing different schools and regions to write their own versions of your reign. You argue that no single text can capture the entire truth and that trying to fix memory in one official story will only distort it. It is not up to you to distinguish the true history.',
         effects: [],
         philosopherTags: {
           zhuangzi: 2,

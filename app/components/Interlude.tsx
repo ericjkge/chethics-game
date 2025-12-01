@@ -27,17 +27,29 @@ const Interlude = ({ onComplete, text, duration = 1000 }: InterludeProps) => {
         <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-white -mb-1 -mr-1"></div>
 
         {/* Content */}
-        <div className="mb-8">
-           <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 uppercase tracking-widest border-b-2 border-white pb-2 inline-block">
+        <div className="mb-6">
+           <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 uppercase tracking-widest border-b-2 border-white pb-2 inline-block">
              REPORT FROM THE PROVINCES
            </h2>
         </div>
         
-        <p className="text-xl md:text-2xl text-gray-300 font-mono leading-relaxed mb-8">
+        {/* Image Placeholder */}
+        <div className="w-full h-48 md:h-64 bg-gray-800 border-2 border-gray-600 flex items-center justify-center mb-6 relative overflow-hidden">
+             <p className="text-gray-500 font-mono text-sm">SCENE ANIMATION PLACEHOLDER</p>
+             {/* Use a generic source or logic to switch based on text content if needed, or user can update later */}
+             <img 
+               src="/images/interlude-scene.gif" 
+               alt="Interlude Scene" 
+               className="absolute inset-0 w-full h-full object-cover opacity-0" // Hidden until image exists
+               onError={(e) => e.currentTarget.style.display = 'none'}
+             />
+        </div>
+        
+        <p className="text-lg md:text-xl text-gray-300 font-mono leading-relaxed mb-6">
           {text}
         </p>
 
-        <div className="w-full bg-gray-900 h-1 mt-8 overflow-hidden">
+        <div className="w-full bg-gray-900 h-1 mt-4 overflow-hidden">
            <div 
              className="h-full bg-white animate-[progress_10s_linear_forwards]"
              style={{ animationDuration: `${duration}ms` }}
