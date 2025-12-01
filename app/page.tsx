@@ -10,8 +10,42 @@ import { ENDINGS } from './data/endings';
 import { PhilosopherSchool } from './types/game';
 
 export default function Home() {
-  const { gameState, makeChoice, continueGame, endInterlude, resetGame, getSchoolAlignment } = useGameState();
+  const { gameState, makeChoice, continueGame, endInterlude, resetGame, getSchoolAlignment, startGame } = useGameState();
   const currentScenario = getScenarioById(gameState.currentScenarioId);
+  
+  // Logic for Start Screen
+  if (!gameState.isGameStarted) {
+    return (
+      <div className="h-screen w-screen bg-gray-900 font-pixel flex flex-col items-center justify-center overflow-hidden p-4">
+         <div className="max-w-4xl w-full bg-black border-4 border-white p-8 text-center flex flex-col gap-8 items-center">
+            <div className="border-b-4 border-double border-white pb-4 w-full">
+                <h1 className="text-4xl md:text-6xl font-bold text-white tracking-widest uppercase mb-2">
+                  THE RULER'S PATH
+                </h1>
+                <p className="text-gray-400 text-lg md:text-xl font-mono tracking-wider uppercase">
+                  A Philosophical Strategy Game
+                </p>
+            </div>
+            
+            <div className="max-w-2xl text-gray-300 font-mono leading-relaxed space-y-4 text-lg">
+                <p>
+                   The Warring States Period has left the realm fractured. As the newly crowned ruler, your every decision will shape the destiny of your kingdom.
+                </p>
+                <p>
+                   Will you rule with benevolence, strict law, or effortless action?
+                </p>
+            </div>
+
+            <button 
+                onClick={startGame}
+                className="mt-8 bg-white text-black font-bold text-2xl py-4 px-12 border-4 border-gray-400 hover:bg-gray-200 hover:border-white uppercase tracking-widest"
+            >
+                BEGIN REIGN
+            </button>
+         </div>
+      </div>
+    );
+  }
   
   // Logic for Game End Screen
   if (gameState.currentScenarioId === 'game-end') {

@@ -57,4 +57,5 @@ export interface GameState {
   history: string[];
   activeChoice: Choice | null;
   isInterlude?: boolean;
+  isGameStarted?: boolean;
 }

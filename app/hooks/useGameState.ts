@@ -26,7 +26,15 @@ export const useGameState = () => {
     philosopherAlignment: INITIAL_PHILOSOPHER_ALIGNMENT,
     history: [],
     activeChoice: null,
+    isGameStarted: false, // New initial state
   });
+
+  const startGame = () => {
+    setGameState(prevState => ({
+      ...prevState,
+      isGameStarted: true,
+    }));
+  };
 
   const makeChoice = (choice: Choice) => {
     setGameState(prevState => {
@@ -162,5 +170,6 @@ export const useGameState = () => {
     resetGame,
     getSchoolAlignment,
     endInterlude,
+    startGame, // Export new function
   };
 };

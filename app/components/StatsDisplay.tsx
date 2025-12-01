@@ -13,6 +13,7 @@ export const STAT_LABELS: { [K in keyof GameStats]: string } = {
   deterrence: 'DETERRENCE',
   diplomacy: 'DIPLOMACY',
   efficiency: 'EFFICIENCY',
+  legacy: 'LEGACY',
 };
 
 export default function StatsDisplay({ stats }: StatsDisplayProps) {
