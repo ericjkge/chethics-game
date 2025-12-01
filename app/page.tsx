@@ -1,65 +1,112 @@
-import Image from "next/image";
+'use client';
+
+import { useGameState } from './hooks/useGameState';
+import { getScenarioById } from './data/scenarios';
+import StatsDisplay, { STAT_LABELS } from './components/StatsDisplay';
+import ScenarioCard from './components/ScenarioCard';
+import ChoiceButton from './components/ChoiceButton';
 
 export default function Home() {
+  const { gameState, makeChoice, continueGame } = useGameState();
+  const currentScenario = getScenarioById(gameState.currentScenarioId);
+  
+  if (!currentScenario && !gameState.activeChoice) {
+    return (
+      <div className="h-screen w-screen bg-gray-900 flex items-center justify-center overflow-hidden">
+        <div className="text-white p-8 text-2xl font-bold border-4 border-white bg-black">
+          END OF DEMO CARTRIDGE
+        </div>
+      </div>
+    );
+  }
+
+  const isResultPhase = !!gameState.activeChoice;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="h-screen w-screen bg-gray-900 font-pixel flex flex-col overflow-hidden">
+      {/* Game Title - Reduced size and margins */}
+      <div className="flex-shrink-0 text-center py-4 border-b-4 border-double border-white bg-gray-900 z-10">
+        <h1 className="text-2xl md:text-4xl font-bold text-white tracking-widest uppercase">
+          THE RULER'S PATH
+        </h1>
+      </div>
+
+      {/* Main Game Container - Flex column to fill remaining height */}
+      <div className="flex-grow flex flex-col max-w-7xl mx-auto w-full px-4 py-4 overflow-hidden">
+        
+        {/* Top: Scenario Description - Scrollable if needed but constrained */}
+        {currentScenario && (
+           <div className="flex-shrink-0 mb-4">
+            <ScenarioCard scenario={currentScenario} />
+          </div>
+        )}
+
+        {/* Middle: Choices or Results - Flex grow to take available space */}
+        <div className="flex-grow flex flex-col justify-center min-h-0 mb-4">
+          {!isResultPhase && currentScenario ? (
+            <div className="flex flex-col justify-center h-full">
+              {/* Removed grid height constraints to allow natural sizing */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {currentScenario.choices.map((choice) => (
+                  <ChoiceButton
+                    key={choice.id}
+                    choice={choice}
+                    onSelect={makeChoice}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : gameState.activeChoice ? (
+            <div className="h-full flex flex-col justify-center items-center bg-black border-4 border-white p-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <h2 className="text-2xl font-bold text-green-500 mb-2 uppercase tracking-widest flex-shrink-0">
+                DECISION RECORDED
+              </h2>
+              
+              <div className="mb-4 text-center overflow-y-auto min-h-0 flex-shrink">
+                <h3 className="text-lg text-yellow-400 font-bold mb-2">{gameState.activeChoice.title}</h3>
+                <p className="text-gray-300 font-mono mb-4 text-sm leading-snug">{gameState.activeChoice.description}</p>
+                
+                {/* Removed divider line to save space */}
+                <div className="pt-2">
+                  <h4 className="text-white text-sm mb-2 uppercase tracking-wider">Consequences</h4>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {gameState.activeChoice.effects.map((effect, index) => {
+                      const isPositive = effect.change > 0;
+                      return (
+                        <div
+                          key={index}
+                          className={`px-2 py-0.5 text-xs font-bold border ${
+                            isPositive
+                              ? 'bg-green-900 text-green-300 border-green-500'
+                              : 'bg-red-900 text-red-300 border-red-500'
+                          }`}
+                        >
+                           {isPositive ? '+' : ''}{effect.change} {STAT_LABELS[effect.stat]}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex-shrink-0 mt-2">
+                <button
+                  onClick={continueGame}
+                  className="bg-white text-black font-bold text-lg py-1.5 px-6 border-4 border-gray-400 hover:bg-gray-200 hover:border-white uppercase tracking-widest"
+                >
+                  CONTINUE
+                </button>
+              </div>
+            </div>
+          ) : null}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Bottom: Stats Display - Fixed at bottom */}
+        <div className="flex-shrink-0">
+          <StatsDisplay stats={gameState.stats} />
         </div>
-      </main>
+        
+      </div>
     </div>
   );
 }
