@@ -90,23 +90,41 @@ export default function Home() {
     });
     
     const subBlurb = outcome.subBlurbs[dominantPhilosopherId] || outcome.description; // Fallback
+    
+    // Helper to get philosopher name
+    const getPhilosopherName = (id: string) => {
+        // Simple lookup or find in PHILOSOPHERS array
+        // Since we don't import PHILOSOPHERS here, we can do a quick map or import it
+        // For now, quick map for display
+        const names: Record<string, string> = {
+            'confucius': 'Confucius',
+            'xunzi': 'Xunzi',
+            'mengzi': 'Mencius',
+            'mozi': 'Mozi',
+            'laozi': 'Laozi',
+            'zhuangzi': 'Zhuangzi',
+            'hanfeizi': 'Han Feizi',
+            'lordshang': 'Lord Shang'
+        };
+        return names[id] || 'The Sage';
+    };
 
     return (
       <div className="h-screen w-screen bg-gray-900 font-pixel flex flex-col items-center justify-center overflow-hidden p-4">
-         <div className="max-w-4xl w-full bg-black border-4 border-white p-8 text-center flex flex-col gap-6 max-h-full overflow-y-auto">
-            <h1 className={`text-3xl md:text-5xl font-bold tracking-widest uppercase ${isHighLegacy ? 'text-yellow-400' : 'text-gray-400'}`}>
+         <div className="max-w-4xl w-full bg-black border-4 border-white p-6 text-center flex flex-col gap-4 max-h-full overflow-y-auto">
+            <h1 className={`text-2xl md:text-4xl font-bold tracking-widest uppercase ${isHighLegacy ? 'text-yellow-400' : 'text-gray-400'}`}>
                 {outcome.title}
             </h1>
             
-            <div className="border-t-2 border-b-2 border-gray-700 py-4">
-                <p className="text-xl md:text-2xl text-white leading-relaxed font-mono">
+            <div className="border-t-2 border-b-2 border-gray-700 py-3">
+                <p className="text-base md:text-lg text-white leading-snug font-mono">
                     {outcome.description}
                 </p>
             </div>
             
             <div className="bg-gray-900 p-4 border border-gray-600">
-                 <h3 className="text-green-500 font-bold uppercase mb-2 text-sm tracking-wider">Philosopher's Note</h3>
-                 <p className="text-lg text-gray-300 italic font-serif">
+                 <h3 className="text-green-500 font-bold uppercase mb-2 text-sm tracking-wider">{getPhilosopherName(dominantPhilosopherId)}</h3>
+                 <p className="text-base text-gray-300 italic font-mono">
                     "{subBlurb}"
                  </p>
             </div>
@@ -118,7 +136,7 @@ export default function Home() {
 
             <button 
                 onClick={resetGame}
-                className="mt-4 bg-white text-black font-bold text-xl py-3 px-8 border-4 border-gray-400 hover:bg-gray-200 hover:border-white uppercase tracking-widest self-center"
+                className="mt-2 bg-white text-black font-bold text-lg py-2 px-6 border-4 border-gray-400 hover:bg-gray-200 hover:border-white uppercase tracking-widest self-center"
             >
                 PLAY AGAIN
             </button>
@@ -197,35 +215,28 @@ export default function Home() {
                     <p className="text-gray-300 font-mono mb-4 text-base leading-snug">{gameState.activeChoice.description}</p>
                     
                     {/* Removed divider line to save space */}
-                    <div className="pt-2">
-                      <h4 className="text-white text-sm mb-2 uppercase tracking-wider">Consequences</h4>
-                      <div className="flex flex-wrap justify-center gap-2">
-                        {gameState.activeChoice.effects.length > 0 ? (
-                          gameState.activeChoice.effects.map((effect, index) => {
-                            // Skip displaying legacy effect
-                            if (effect.stat === 'legacy') return null;
-                            
-                            const isPositive = effect.change > 0;
-                            return (
-                              <div
-                                key={index}
-                                className={`px-2 py-0.5 text-xs font-bold border ${
-                                  isPositive
-                                    ? 'bg-green-900 text-green-300 border-green-500'
-                                    : 'bg-red-900 text-red-300 border-red-500'
-                                }`}
-                              >
-                                 {isPositive ? '+' : ''}{effect.change} {STAT_LABELS[effect.stat]}
-                              </div>
-                            );
-                          })
-                        ) : (
-                          <div className="px-2 py-0.5 text-xs font-bold border border-gray-600 text-white bg-gray-800">
-                            N/A
-                          </div>
-                        )}
+                    {(gameState.activeChoice.effects.length > 0 && gameState.activeChoice.effects.some(e => e.stat !== 'legacy' || true)) && (
+                      <div className="pt-2">
+                        <h4 className="text-white text-sm mb-2 uppercase tracking-wider">Consequences</h4>
+                        <div className="flex flex-wrap justify-center gap-2">
+                          {gameState.activeChoice.effects.map((effect, index) => {
+                              const isPositive = effect.change > 0;
+                              return (
+                                <div
+                                  key={index}
+                                  className={`px-2 py-0.5 text-xs font-bold border ${
+                                    isPositive
+                                      ? 'bg-green-900 text-green-300 border-green-500'
+                                      : 'bg-red-900 text-red-300 border-red-500'
+                                  }`}
+                                >
+                                   {isPositive ? '+' : ''}{effect.change} {STAT_LABELS[effect.stat]}
+                                </div>
+                              );
+                          })}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   <div className="flex-shrink-0 mt-2">
