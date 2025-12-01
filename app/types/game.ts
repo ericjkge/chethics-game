@@ -59,4 +59,6 @@ export interface GameState {
   activeChoice: Choice | null;
   isInterlude?: boolean;
   isGameStarted?: boolean;
+  isTitleCard?: boolean;
+  titleCardAct?: string;
 }

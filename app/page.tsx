@@ -6,11 +6,12 @@ import StatsDisplay, { STAT_LABELS } from './components/StatsDisplay';
 import ScenarioCard from './components/ScenarioCard';
 import ChoiceButton from './components/ChoiceButton';
 import Interlude from './components/Interlude';
+import TitleCard from './components/TitleCard';
 import { ENDINGS } from './data/endings';
 import { PhilosopherSchool } from './types/game';
 
 export default function Home() {
-  const { gameState, makeChoice, continueGame, endInterlude, resetGame, getSchoolAlignment, startGame } = useGameState();
+  const { gameState, makeChoice, continueGame, endInterlude, resetGame, getSchoolAlignment, startGame, endTitleCard } = useGameState();
   const currentScenario = getScenarioById(gameState.currentScenarioId);
   
   // Logic for Start Screen
@@ -180,13 +181,18 @@ export default function Home() {
       {/* Main Game Container - Flex column to fill remaining height */}
       <div className="flex-grow flex flex-col max-w-7xl mx-auto w-full px-4 py-4 overflow-hidden">
         
-        {gameState.isInterlude ? (
+        {gameState.isTitleCard ? (
+          <TitleCard 
+             actTitle={gameState.titleCardAct || 'Act II'}
+             onComplete={endTitleCard}
+          />
+        ) : gameState.isInterlude ? (
           <Interlude 
              text={
                gameState.currentScenarioId === 'military-reform'
                 ? "Your ministers pass on a note from local nobles, who state that the peasants are becoming lazy and uncooperative, demanding more and more without producing the necessary outputs."
                 : gameState.currentScenarioId === 'corrupt-minister'
-                ? "Ministers rush into your office with alarming news: intelligence suggests that factions of your neighbors are readying an invasion. Scouts have reported armies bearing foreign flags lining up at the outer gates. Fear spreads across the city."
+                ? "Ministers rush into your office with alarming news: Intelligence suggests that factions of your neighbors are readying an invasion. Scouts have reported word that they have seen armies bearing foreign flags lining up at the outer city gates, and merchants arriving from markets nearby whisper that enemy forces are stockpiling grain and supplies."
                 : "One crisp fall morning, you pass away peacefully, accompanied by your family and ministers. You have ruled over a long and tumultuous time, leaving behind a complex and influential legacy. How will you ultimately be remembered?"
              }
              onComplete={endInterlude}

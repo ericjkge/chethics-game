@@ -102,6 +102,19 @@ export const useGameState = () => {
       const isEndOfAct3 = prevState.currentScenarioId === 'peoples-memory';
       const isAct2Interlude = prevState.currentScenarioId === 'corrupt-minister'; // Before border-defense
       
+      // Check if we should show title card before Act 2 or Act 3
+      const nextScenarioId = prevState.activeChoice.nextScenarioId;
+      const isStartOfAct2 = nextScenarioId === 'inventors-proposal';
+      const isStartOfAct3 = nextScenarioId === 'succession-plot';
+      
+      if ((isStartOfAct2 || isStartOfAct3) && !prevState.isTitleCard) {
+          return {
+             ...prevState,
+             isTitleCard: true,
+             titleCardAct: isStartOfAct2 ? 'Act II' : 'Act III'
+          };
+      }
+      
       if ((isEndOfAct1 || isAct2Interlude) && !prevState.isInterlude) {
          return {
             ...prevState,
@@ -127,6 +140,7 @@ export const useGameState = () => {
         currentScenarioId: prevState.activeChoice.nextScenarioId,
         activeChoice: null,
         isInterlude: false,
+        isTitleCard: false,
       };
     });
   };
@@ -140,6 +154,19 @@ export const useGameState = () => {
             currentScenarioId: prevState.activeChoice.nextScenarioId,
             activeChoice: null,
             isInterlude: false
+          };
+      });
+  };
+  
+  const endTitleCard = () => {
+      setGameState(prevState => {
+          if (!prevState.activeChoice?.nextScenarioId) return prevState;
+          
+          return {
+            ...prevState,
+            currentScenarioId: prevState.activeChoice.nextScenarioId,
+            activeChoice: null,
+            isTitleCard: false
           };
       });
   };
@@ -179,5 +206,6 @@ export const useGameState = () => {
     getSchoolAlignment,
     endInterlude,
     startGame, // Export new function
+    endTitleCard,
   };
 };

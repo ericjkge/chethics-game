@@ -8,7 +8,7 @@ interface InterludeProps {
   duration?: number;
 }
 
-const Interlude = ({ onComplete, text, duration = 1000 }: InterludeProps) => {
+const Interlude = ({ onComplete, text, duration = 5000 }: InterludeProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onComplete();
