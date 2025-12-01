@@ -167,8 +167,8 @@ export const useGameState = () => {
             currentScenarioId: prevState.activeChoice.nextScenarioId,
             activeChoice: null,
             isTitleCard: false
-          };
-      });
+      };
+    });
   };
 
   const resetGame = () => {

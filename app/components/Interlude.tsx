@@ -6,9 +6,10 @@ interface InterludeProps {
   onComplete: () => void;
   text: string;
   duration?: number;
+  imageName?: string; // New prop for specific image
 }
 
-const Interlude = ({ onComplete, text, duration = 5000 }: InterludeProps) => {
+const Interlude = ({ onComplete, text, duration = 10000, imageName }: InterludeProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onComplete();
@@ -35,14 +36,22 @@ const Interlude = ({ onComplete, text, duration = 5000 }: InterludeProps) => {
         
         {/* Image Placeholder */}
         <div className="w-full h-48 md:h-64 bg-gray-800 border-2 border-gray-600 flex items-center justify-center mb-6 relative overflow-hidden">
-             <p className="text-gray-500 font-mono text-sm">SCENE ANIMATION PLACEHOLDER</p>
-             {/* Use a generic source or logic to switch based on text content if needed, or user can update later */}
-             <img 
-               src="/images/interlude-scene.gif" 
-               alt="Interlude Scene" 
-               className="absolute inset-0 w-full h-full object-cover opacity-0" // Hidden until image exists
-               onError={(e) => e.currentTarget.style.display = 'none'}
-             />
+             {imageName && (
+               <img 
+                 src={`/images/${imageName}.png`}
+                 alt="Interlude Scene" 
+                 className="absolute inset-0 w-full h-full object-contain transition-opacity duration-500"
+                 style={{ imageRendering: 'pixelated' }}
+                 onError={(e) => {
+                   e.currentTarget.style.display = 'none';
+                   const placeholder = document.createElement('p');
+                   placeholder.className = 'text-gray-500 font-mono text-sm';
+                   placeholder.textContent = 'SCENE ANIMATION PLACEHOLDER';
+                   e.currentTarget.parentElement?.appendChild(placeholder);
+                 }}
+               />
+             )}
+             {!imageName && <p className="text-gray-500 font-mono text-sm">SCENE ANIMATION PLACEHOLDER</p>}
         </div>
         
         <p className="text-lg md:text-xl text-gray-300 font-mono leading-relaxed mb-6">

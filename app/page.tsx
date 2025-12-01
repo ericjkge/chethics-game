@@ -37,6 +37,23 @@ export default function Home() {
                 </p>
             </div>
 
+            {/* Title Image */}
+            <div className="w-full h-64 md:h-80 bg-gray-800 border-2 border-gray-600 flex items-center justify-center relative overflow-hidden">
+                 <img 
+                   src="/images/title.png" 
+                   alt="The Ruler's Path Title" 
+                   className="absolute inset-0 w-full h-full object-contain transition-opacity duration-500"
+                   style={{ imageRendering: 'pixelated' }}
+                   onError={(e) => {
+                     e.currentTarget.style.display = 'none';
+                     const placeholder = document.createElement('p');
+                     placeholder.className = 'text-gray-500 font-mono text-sm';
+                     placeholder.textContent = 'TITLE IMAGE PLACEHOLDER';
+                     e.currentTarget.parentElement?.appendChild(placeholder);
+                   }}
+                 />
+            </div>
+
             <button 
                 onClick={startGame}
                 className="mt-8 bg-white text-black font-bold text-2xl py-4 px-12 border-4 border-gray-400 hover:bg-gray-200 hover:border-white uppercase tracking-widest"
@@ -115,12 +132,18 @@ export default function Home() {
          <div className="max-w-4xl w-full bg-black border-4 border-white p-6 text-center flex flex-col gap-4 max-h-full overflow-y-auto">
             {/* Image Placeholder */}
             <div className="w-full h-48 md:h-64 bg-gray-800 border-2 border-gray-600 flex items-center justify-center mb-4 relative overflow-hidden">
-                 <p className="text-gray-500 font-mono text-sm">ENDING ANIMATION PLACEHOLDER</p>
                  <img 
-                   src="/images/ending-scene.gif" 
+                   src={`/images/${isHighLegacy ? 'good' : 'bad'}_ending.png`}
                    alt="Ending Scene" 
-                   className="absolute inset-0 w-full h-full object-cover opacity-0" // Hidden until image exists
-                   onError={(e) => e.currentTarget.style.display = 'none'}
+                   className="absolute inset-0 w-full h-full object-contain transition-opacity duration-500"
+                   style={{ imageRendering: 'pixelated' }}
+                   onError={(e) => {
+                     e.currentTarget.style.display = 'none';
+                     const placeholder = document.createElement('p');
+                     placeholder.className = 'text-gray-500 font-mono text-sm';
+                     placeholder.textContent = 'ENDING ANIMATION PLACEHOLDER';
+                     e.currentTarget.parentElement?.appendChild(placeholder);
+                   }}
                  />
             </div>
 
@@ -194,6 +217,13 @@ export default function Home() {
                 : gameState.currentScenarioId === 'corrupt-minister'
                 ? "Ministers rush into your office with alarming news: Intelligence suggests that factions of your neighbors are readying an invasion. Scouts have reported word that they have seen armies bearing foreign flags lining up at the outer city gates, and merchants arriving from markets nearby whisper that enemy forces are stockpiling grain and supplies."
                 : "One crisp fall morning, you pass away peacefully, accompanied by your family and ministers. You have ruled over a long and tumultuous time, leaving behind a complex and influential legacy. How will you ultimately be remembered?"
+             }
+             imageName={
+               gameState.currentScenarioId === 'military-reform'
+                ? 'act1_interlude'
+                : gameState.currentScenarioId === 'corrupt-minister'
+                ? 'act2_interlude'
+                : 'act3_interlude'
              }
              onComplete={endInterlude}
           />

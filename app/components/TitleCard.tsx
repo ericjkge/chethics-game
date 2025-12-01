@@ -17,6 +17,13 @@ const TitleCard = ({ onComplete, actTitle, duration = 5000 }: TitleCardProps) =>
     return () => clearTimeout(timer);
   }, [onComplete, duration]);
 
+  // Convert "Act II" -> "act2", "Act III" -> "act3"
+  const getImageName = (title: string) => {
+    if (title === 'Act II') return 'act2_title';
+    if (title === 'Act III') return 'act3_title';
+    return 'act_title'; // fallback
+  };
+
   return (
     <div className="flex-grow flex flex-col justify-center items-center p-8 animate-in fade-in duration-1000">
       <div className="max-w-4xl w-full bg-black border-4 border-white p-8 text-center relative">
@@ -28,12 +35,18 @@ const TitleCard = ({ onComplete, actTitle, duration = 5000 }: TitleCardProps) =>
 
         {/* Image Placeholder */}
         <div className="w-full h-64 md:h-80 bg-gray-800 border-2 border-gray-600 flex items-center justify-center mb-8 relative overflow-hidden">
-             <p className="text-gray-500 font-mono text-sm">ACT TITLE ANIMATION PLACEHOLDER</p>
              <img 
-               src={`/images/act-${actTitle.toLowerCase().replace(/\s+/g, '-')}.gif`}
+               src={`/images/${getImageName(actTitle)}.png`}
                alt={`${actTitle} Title`}
-               className="absolute inset-0 w-full h-full object-cover opacity-0"
-               onError={(e) => e.currentTarget.style.display = 'none'}
+               className="absolute inset-0 w-full h-full object-contain transition-opacity duration-500"
+               style={{ imageRendering: 'pixelated' }}
+               onError={(e) => {
+                 e.currentTarget.style.display = 'none';
+                 const placeholder = document.createElement('p');
+                 placeholder.className = 'text-gray-500 font-mono text-sm';
+                 placeholder.textContent = 'ACT TITLE ANIMATION PLACEHOLDER';
+                 e.currentTarget.parentElement?.appendChild(placeholder);
+               }}
              />
         </div>
 
