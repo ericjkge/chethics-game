@@ -5,6 +5,7 @@ export interface GameStats {
   deterrence: number;
   diplomacy: number;
   efficiency: number;
+  legacy: number;
 }
 
 export interface PhilosopherAlignment {
@@ -34,6 +35,10 @@ export interface Choice {
   philosopherTags: { [philosopherId: string]: number };
   risks?: string;
   nextScenarioId?: string;
+  // Conditional logic
+  condition?: (stats: GameStats, history: string[]) => boolean;
+  alternateDescription?: string;
+  alternateEffects?: ChoiceEffect[];
 }
 
 export interface Scenario {

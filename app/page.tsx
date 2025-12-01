@@ -6,11 +6,93 @@ import StatsDisplay, { STAT_LABELS } from './components/StatsDisplay';
 import ScenarioCard from './components/ScenarioCard';
 import ChoiceButton from './components/ChoiceButton';
 import Interlude from './components/Interlude';
+import { ENDINGS } from './data/endings';
+import { PhilosopherSchool } from './types/game';
 
 export default function Home() {
-  const { gameState, makeChoice, continueGame, endInterlude } = useGameState();
+  const { gameState, makeChoice, continueGame, endInterlude, resetGame, getSchoolAlignment } = useGameState();
   const currentScenario = getScenarioById(gameState.currentScenarioId);
   
+  // Logic for Game End Screen
+  if (gameState.currentScenarioId === 'game-end') {
+    const schoolAlignment = getSchoolAlignment();
+    const schools: PhilosopherSchool[] = ['confucian', 'mohist', 'daoist', 'legalist'];
+    
+    // Find school with highest score
+    let dominantSchool: PhilosopherSchool = 'confucian'; // Default
+    let maxScore = -1;
+    
+    schools.forEach(school => {
+      if (schoolAlignment[school] > maxScore) {
+        maxScore = schoolAlignment[school];
+        dominantSchool = school;
+      }
+    });
+    
+    const isHighLegacy = gameState.stats.legacy >= 50;
+    const schoolEndings = ENDINGS[dominantSchool];
+    const outcome = isHighLegacy ? schoolEndings.highLegacy : schoolEndings.lowLegacy;
+    
+    // Find specific philosopher variant
+    // Logic: Look at philosophers belonging to this school and pick one with highest individual score
+    // Mapping school -> philosophers IDs
+    const schoolToPhilosophers: Record<PhilosopherSchool, string[]> = {
+        confucian: ['confucius', 'xunzi', 'mengzi'],
+        mohist: ['mozi'],
+        daoist: ['laozi', 'zhuangzi'],
+        legalist: ['hanfeizi', 'lordshang']
+    };
+    
+    const philosopherIds = schoolToPhilosophers[dominantSchool];
+    let dominantPhilosopherId = philosopherIds[0];
+    let maxPhilScore = -1;
+    
+    philosopherIds.forEach(id => {
+        const score = gameState.philosopherAlignment[id] || 0;
+        if (score > maxPhilScore) {
+            maxPhilScore = score;
+            dominantPhilosopherId = id;
+        }
+    });
+    
+    const subBlurb = outcome.subBlurbs[dominantPhilosopherId] || outcome.description; // Fallback
+
+    return (
+      <div className="h-screen w-screen bg-gray-900 font-pixel flex flex-col items-center justify-center overflow-hidden p-4">
+         <div className="max-w-4xl w-full bg-black border-4 border-white p-8 text-center flex flex-col gap-6 max-h-full overflow-y-auto">
+            <h1 className={`text-3xl md:text-5xl font-bold tracking-widest uppercase ${isHighLegacy ? 'text-yellow-400' : 'text-gray-400'}`}>
+                {outcome.title}
+            </h1>
+            
+            <div className="border-t-2 border-b-2 border-gray-700 py-4">
+                <p className="text-xl md:text-2xl text-white leading-relaxed font-mono">
+                    {outcome.description}
+                </p>
+            </div>
+            
+            <div className="bg-gray-900 p-4 border border-gray-600">
+                 <h3 className="text-green-500 font-bold uppercase mb-2 text-sm tracking-wider">Philosopher's Note</h3>
+                 <p className="text-lg text-gray-300 italic font-serif">
+                    "{subBlurb}"
+                 </p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 text-sm font-mono text-gray-400">
+                 <div>FINAL LEGACY: {gameState.stats.legacy}</div>
+                 <div className="uppercase">PATH: {dominantSchool}</div>
+            </div>
+
+            <button 
+                onClick={resetGame}
+                className="mt-4 bg-white text-black font-bold text-xl py-3 px-8 border-4 border-gray-400 hover:bg-gray-200 hover:border-white uppercase tracking-widest self-center"
+            >
+                PLAY AGAIN
+            </button>
+         </div>
+      </div>
+    );
+  }
+
   if (!currentScenario && !gameState.activeChoice && !gameState.isInterlude) {
     return (
       <div className="h-screen w-screen bg-gray-900 flex items-center justify-center overflow-hidden">
@@ -37,7 +119,13 @@ export default function Home() {
         
         {gameState.isInterlude ? (
           <Interlude 
-             text="Your ministers pass on a note from local nobles, who state that the peasants are becoming lazy and uncooperative, demanding more and more without producing the necessary outputs."
+             text={
+               gameState.currentScenarioId === 'military-reform'
+                ? "Your ministers pass on a note from local nobles, who state that the peasants are becoming lazy and uncooperative, demanding more and more without producing the necessary outputs."
+                : gameState.currentScenarioId === 'corrupt-minister'
+                ? "Ministers rush into your office with alarming news: Intelligence suggests that factions of your neighbors are readying an invasion. Scouts have reported word that they have seen armies bearing foreign flags lining up at the outer city gates, and merchants arriving from markets nearby whisper that enemy forces are stockpiling grain and supplies."
+                : "One crisp fall morning, you pass away peacefully, accompanied by your family and ministers. You have ruled over a long and tumultuous time, leaving behind a complex and influential legacy. How will you ultimately be remembered?"
+             }
              onComplete={endInterlude}
           />
         ) : (
@@ -72,7 +160,7 @@ export default function Home() {
                   
                   <div className="mb-4 text-center overflow-y-auto min-h-0 flex-shrink">
                     <h3 className="text-lg text-yellow-400 font-bold mb-2">{gameState.activeChoice.title}</h3>
-                    <p className="text-gray-300 font-mono mb-4 text-sm leading-snug">{gameState.activeChoice.description}</p>
+                    <p className="text-gray-300 font-mono mb-4 text-base leading-snug">{gameState.activeChoice.description}</p>
                     
                     {/* Removed divider line to save space */}
                     <div className="pt-2">
@@ -80,6 +168,9 @@ export default function Home() {
                       <div className="flex flex-wrap justify-center gap-2">
                         {gameState.activeChoice.effects.length > 0 ? (
                           gameState.activeChoice.effects.map((effect, index) => {
+                            // Skip displaying legacy effect
+                            if (effect.stat === 'legacy') return null;
+                            
                             const isPositive = effect.change > 0;
                             return (
                               <div

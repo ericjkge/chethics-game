@@ -16,13 +16,16 @@ export const STAT_LABELS: { [K in keyof GameStats]: string } = {
 };
 
 export default function StatsDisplay({ stats }: StatsDisplayProps) {
+  // Filter out legacy from display stats
+  const displayStats = Object.keys(stats).filter(key => key !== 'legacy') as Array<keyof GameStats>;
+
   return (
     <div className="bg-black border-4 border-white p-4 shadow-none">
       <h2 className="text-base font-bold text-white mb-3 text-center border-b-2 border-white pb-2 tracking-widest">
         STATE METRICS
       </h2>
       <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-        {(Object.keys(stats) as Array<keyof GameStats>).map((statKey) => {
+        {displayStats.map((statKey) => {
           const value = stats[statKey];
           const label = STAT_LABELS[statKey];
           

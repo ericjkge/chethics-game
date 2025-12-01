@@ -11,6 +11,7 @@ const INITIAL_STATS: GameStats = {
   deterrence: 50,
   diplomacy: 50,
   efficiency: 50,
+  legacy: 50,
 };
 
 const INITIAL_PHILOSOPHER_ALIGNMENT = PHILOSOPHERS.reduce((acc, philosopher) => {
@@ -29,27 +30,46 @@ export const useGameState = () => {
 
   const makeChoice = (choice: Choice) => {
     setGameState(prevState => {
+      // Check for conditional failure (e.g., low efficiency in famine)
+      // Note: logic for "if Efficiency is -2" depends on how we model stats. 
+      // Stats are 0-100. "Efficiency is -2" likely implies a low threshold or a relative change.
+      // Assuming the prompt meant "If Efficiency is low (e.g. < 30)" or similar check.
+      // Or if we literally track negative changes from a baseline.
+      // For now, I'll implement the generic condition checker if provided in the Choice object.
+      
+      let finalChoice = choice;
+      if (choice.condition && !choice.condition(prevState.stats, prevState.history)) {
+          // Condition FAILED. Use alternate description and effects if available.
+          if (choice.alternateDescription) {
+              finalChoice = {
+                  ...choice,
+                  description: choice.alternateDescription,
+                  effects: choice.alternateEffects || []
+              };
+          }
+      }
+
       // Apply stat changes
       const newStats = { ...prevState.stats };
-      choice.effects.forEach(effect => {
+      finalChoice.effects.forEach(effect => {
         newStats[effect.stat] = Math.max(0, Math.min(100, newStats[effect.stat] + effect.change));
       });
 
       // Apply philosopher alignment changes
       const newAlignment = { ...prevState.philosopherAlignment };
-      Object.entries(choice.philosopherTags).forEach(([philosopherId, points]) => {
+      Object.entries(finalChoice.philosopherTags).forEach(([philosopherId, points]) => {
         newAlignment[philosopherId] = (newAlignment[philosopherId] || 0) + points;
       });
 
       // Add to history
-      const newHistory = [...prevState.history, choice.id];
+      const newHistory = [...prevState.history, finalChoice.id];
 
       return {
         ...prevState,
         stats: newStats,
         philosopherAlignment: newAlignment,
         history: newHistory,
-        activeChoice: choice, // Set active choice to show results
+        activeChoice: finalChoice, // Set active choice to show results
       };
     });
   };
@@ -63,13 +83,27 @@ export const useGameState = () => {
       // Check if we should trigger interlude
       // Logic: If coming from military-reform (Act 1 end), trigger interlude
       const isEndOfAct1 = prevState.currentScenarioId === 'military-reform';
+      const isEndOfAct3 = prevState.currentScenarioId === 'peoples-memory';
+      const isAct2Interlude = prevState.currentScenarioId === 'corrupt-minister'; // Before border-defense
       
-      if (isEndOfAct1 && !prevState.isInterlude) {
+      if ((isEndOfAct1 || isAct2Interlude) && !prevState.isInterlude) {
          return {
             ...prevState,
             isInterlude: true
             // We keep activeChoice so we remember where to go next
          };
+      }
+      
+      // Special case for end of game
+      if (isEndOfAct3 && !prevState.isInterlude) {
+          return {
+             ...prevState,
+             isInterlude: true,
+             activeChoice: {
+                 ...prevState.activeChoice!,
+                 nextScenarioId: 'game-end' // Override nextScenarioId to point to game end
+             }
+          };
       }
 
       return {
