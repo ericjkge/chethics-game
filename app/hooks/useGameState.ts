@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { GameState, GameStats, Choice } from '../types/game';
+import { GameState, GameStats, Choice, PhilosopherSchool } from '../types/game';
 import { PHILOSOPHERS } from '../data/philosophers';
 
 const INITIAL_STATS: GameStats = {
@@ -59,12 +59,39 @@ export const useGameState = () => {
       if (!prevState.activeChoice?.nextScenarioId) {
         return prevState;
       }
+
+      // Check if we should trigger interlude
+      // Logic: If coming from military-reform (Act 1 end), trigger interlude
+      const isEndOfAct1 = prevState.currentScenarioId === 'military-reform';
+      
+      if (isEndOfAct1 && !prevState.isInterlude) {
+         return {
+            ...prevState,
+            isInterlude: true
+            // We keep activeChoice so we remember where to go next
+         };
+      }
+
       return {
         ...prevState,
         currentScenarioId: prevState.activeChoice.nextScenarioId,
         activeChoice: null,
+        isInterlude: false,
       };
     });
+  };
+  
+  const endInterlude = () => {
+      setGameState(prevState => {
+          if (!prevState.activeChoice?.nextScenarioId) return prevState;
+          
+          return {
+            ...prevState,
+            currentScenarioId: prevState.activeChoice.nextScenarioId,
+            activeChoice: null,
+            isInterlude: false
+          };
+      });
   };
 
   const resetGame = () => {
@@ -77,10 +104,29 @@ export const useGameState = () => {
     });
   };
 
+  const getSchoolAlignment = (): Record<PhilosopherSchool, number> => {
+    const schools: Record<PhilosopherSchool, number> = {
+      confucian: 0,
+      mohist: 0,
+      daoist: 0,
+      legalist: 0
+    };
+    
+    Object.entries(gameState.philosopherAlignment).forEach(([id, score]) => {
+      const philosopher = PHILOSOPHERS.find(p => p.id === id);
+      if (philosopher && philosopher.school) {
+        schools[philosopher.school] = (schools[philosopher.school] || 0) + score;
+      }
+    });
+    return schools;
+  };
+
   return {
     gameState,
     makeChoice,
     continueGame,
     resetGame,
+    getSchoolAlignment,
+    endInterlude,
   };
 };

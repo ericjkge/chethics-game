@@ -11,9 +11,12 @@ export interface PhilosopherAlignment {
   [philosopherId: string]: number;
 }
 
+export type PhilosopherSchool = 'confucian' | 'mohist' | 'daoist' | 'legalist';
+
 export interface Philosopher {
   id: string;
   name: string;
+  school: PhilosopherSchool;
   description: string;
 }
 
@@ -48,4 +51,5 @@ export interface GameState {
   philosopherAlignment: PhilosopherAlignment;
   history: string[];
   activeChoice: Choice | null;
+  isInterlude?: boolean;
 }
