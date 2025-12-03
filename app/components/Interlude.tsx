@@ -9,7 +9,7 @@ interface InterludeProps {
   imageName?: string; // New prop for specific image
 }
 
-const Interlude = ({ onComplete, text, duration = 10000, imageName }: InterludeProps) => {
+const Interlude = ({ onComplete, text, duration = 7000, imageName }: InterludeProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onComplete();
@@ -35,12 +35,12 @@ const Interlude = ({ onComplete, text, duration = 10000, imageName }: InterludeP
         </div>
         
         {/* Image Placeholder */}
-        <div className="w-full h-48 md:h-64 bg-gray-800 border-2 border-gray-600 flex items-center justify-center mb-6 relative overflow-hidden">
+        <div className="flex items-center justify-center bg-gray-800 border-2 border-gray-600 mb-6 max-w-3xl mx-auto">
              {imageName && (
                <img 
                  src={`/images/${imageName}.png`}
                  alt="Interlude Scene" 
-                 className="absolute inset-0 w-full h-full object-contain transition-opacity duration-500"
+                 className="max-w-full max-h-96 transition-opacity duration-500"
                  style={{ imageRendering: 'pixelated' }}
                  onError={(e) => {
                    e.currentTarget.style.display = 'none';

@@ -34,11 +34,11 @@ const TitleCard = ({ onComplete, actTitle, duration = 5000 }: TitleCardProps) =>
         <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-white -mb-1 -mr-1"></div>
 
         {/* Image Placeholder */}
-        <div className="w-full h-64 md:h-80 bg-gray-800 border-2 border-gray-600 flex items-center justify-center mb-8 relative overflow-hidden">
+        <div className="flex items-center justify-center bg-gray-800 border-2 border-gray-600 mb-8 max-w-3xl mx-auto">
              <img 
                src={`/images/${getImageName(actTitle)}.png`}
                alt={`${actTitle} Title`}
-               className="absolute inset-0 w-full h-full object-contain transition-opacity duration-500"
+               className="max-w-full max-h-96 transition-opacity duration-500"
                style={{ imageRendering: 'pixelated' }}
                onError={(e) => {
                  e.currentTarget.style.display = 'none';

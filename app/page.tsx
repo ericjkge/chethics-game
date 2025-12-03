@@ -23,26 +23,22 @@ export default function Home() {
                 <h1 className="text-4xl md:text-6xl font-bold text-white tracking-widest uppercase mb-2">
                   THE RULER'S PATH
                 </h1>
-                <p className="text-gray-400 text-lg md:text-xl font-mono tracking-wider uppercase">
-                  A Philosophical Strategy Game
-                </p>
+
             </div>
             
             <div className="max-w-2xl text-gray-300 font-mono leading-relaxed space-y-4 text-lg">
                 <p>
-                   The Warring States Period has left the realm fractured. As the newly crowned ruler, your every decision will shape the destiny of your kingdom.
+                   The Warring States Period has left the realm fractured. As the newly crowned ruler, your every decision will shape the destiny of your kingdom.                    Will you rule with benevolence, strict law, or effortless action?
                 </p>
-                <p>
-                   Will you rule with benevolence, strict law, or effortless action?
-                </p>
+
             </div>
 
             {/* Title Image */}
-            <div className="w-full h-64 md:h-80 bg-gray-800 border-2 border-gray-600 flex items-center justify-center relative overflow-hidden">
+            <div className="flex items-center justify-center bg-gray-800 border-2 border-gray-600 max-w-3xl mx-auto">
                  <img 
                    src="/images/title.png" 
                    alt="The Ruler's Path Title" 
-                   className="absolute inset-0 w-full h-full object-contain transition-opacity duration-500"
+                   className="max-w-full max-h-96 transition-opacity duration-500"
                    style={{ imageRendering: 'pixelated' }}
                    onError={(e) => {
                      e.currentTarget.style.display = 'none';
@@ -131,11 +127,11 @@ export default function Home() {
       <div className="h-screen w-screen bg-gray-900 font-pixel flex flex-col items-center justify-center overflow-hidden p-4">
          <div className="max-w-4xl w-full bg-black border-4 border-white p-6 text-center flex flex-col gap-4 max-h-full overflow-y-auto">
             {/* Image Placeholder */}
-            <div className="w-full h-48 md:h-64 bg-gray-800 border-2 border-gray-600 flex items-center justify-center mb-4 relative overflow-hidden">
+            <div className="flex items-center justify-center bg-gray-800 border-2 border-gray-600 mb-4 max-w-3xl mx-auto">
                  <img 
                    src={`/images/${isHighLegacy ? 'good' : 'bad'}_ending.png`}
                    alt="Ending Scene" 
-                   className="absolute inset-0 w-full h-full object-contain transition-opacity duration-500"
+                   className="max-w-full max-h-96 transition-opacity duration-500"
                    style={{ imageRendering: 'pixelated' }}
                    onError={(e) => {
                      e.currentTarget.style.display = 'none';
@@ -215,8 +211,8 @@ export default function Home() {
                gameState.currentScenarioId === 'military-reform'
                 ? "Your ministers pass on a note from local nobles, who state that the peasants are becoming lazy and uncooperative, demanding more and more without producing the necessary outputs."
                 : gameState.currentScenarioId === 'corrupt-minister'
-                ? "Ministers rush into your office with alarming news: Intelligence suggests that factions of your neighbors are readying an invasion. Scouts have reported word that they have seen armies bearing foreign flags lining up at the outer city gates, and merchants arriving from markets nearby whisper that enemy forces are stockpiling grain and supplies."
-                : "One crisp fall morning, you pass away peacefully, accompanied by your family and ministers. You have ruled over a long and tumultuous time, leaving behind a complex and influential legacy. How will you ultimately be remembered?"
+                ? "Ministers rush into your office with alarming news: Intelligence suggests that factions of your neighbors are readying an invasion. Merchants arriving from markets nearby whisper that enemy forces are stockpiling grain and supplies."
+                : "One crisp fall morning, you pass away peacefully. You have ruled over a long and tumultuous time, leaving behind a complex and influential legacy. How will you ultimately be remembered?"
              }
              imageName={
                gameState.currentScenarioId === 'military-reform'
